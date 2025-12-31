@@ -4,19 +4,17 @@ include '../../config.php';
 $nombre_proveedor = $_GET['nombre_proveedor'];
 $celular = $_GET['celular'];
 $telefono = $_GET['telefono'];
-$empresa = $_GET['empresa'];
-$email = $_GET['email'];
+$descripcion = $_GET['descripcion'];
 $direccion = $_GET['direccion'];
 
 $sentencia = $pdo->prepare("INSERT INTO tb_proveedores
-            (nombre_proveedor, celular, telefono, empresa, email, direccion, fyh_creacion) 
-    VALUES (:nombre_proveedor,:celular,:telefono,:empresa,:email,:direccion,:fyh_creacion)");
+            (nombre_proveedor, celular, telefono, descripcion, direccion, fyh_creacion) 
+    VALUES (:nombre_proveedor,:celular,:telefono,:descripcion,:direccion,:fyh_creacion)");
 
     $sentencia->bindParam('nombre_proveedor',$nombre_proveedor);
     $sentencia->bindParam('celular',$celular);
     $sentencia->bindParam('telefono',$telefono);
-    $sentencia->bindParam('empresa',$empresa);
-    $sentencia->bindParam('email',$email);
+    $sentencia->bindParam('descripcion',$descripcion);
     $sentencia->bindParam('direccion',$direccion);
     $sentencia->bindParam('fyh_creacion',$fechaHora);
     if($sentencia->execute()){

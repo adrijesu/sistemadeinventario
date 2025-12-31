@@ -1,9 +1,12 @@
-<?php 
- include "../app/config.php";
-include '../layout/sesion.php';
+<?php
+include '../app/config.php';
+include '../app/seguridad.php';
+include '../app/permisos.php';
+
+permitirRoles(['ADMINISTRADOR']);
+
 include '../layout/parte1.php';
 include '../app/controllers/roles/listado_de_roles.php';
-
 ?>
 
   <!-- Content Wrapper. Contains page content -->

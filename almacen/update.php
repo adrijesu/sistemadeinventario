@@ -1,6 +1,17 @@
 <?php 
  include "../app/config.php";
 include '../layout/sesion.php';
+require_once('../app/permisos.php');
+require_once('../app/acciones.php');
+
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+
+$permisosAlmacen = [
+    'ADMINISTRADOR' => ['editar'],
+    'ALMACENERO'    => []   // ❌ NO puede editar
+];
+
+permitirAccion('editar', $permisosAlmacen);
 include '../layout/parte1.php';
 
 include '../app/controllers/categorias/listado_de_categorias.php';
@@ -131,19 +142,26 @@ include '../app/controllers/almacen/cargar_producto.php';
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="">precio compra</label>
-                                            <input type="number" name="precio_compra" value="<?php echo $precio_compra; ?>" class="form-control" required>
+                                            <input type="number" step="any" name="precio_compra" value="<?php echo $precio_compra; ?>" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="">precio venta</label>
-                                            <input type="number" name="precio_venta" value="<?php echo $precio_venta; ?>" class="form-control" required>
+                                            <input type="number" step="any"  name="precio_venta" value="<?php echo $precio_venta; ?>" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="">fecha ingreso</label>
-                                            <input type="date" name="fecha_ingreso" value="<?php echo $fecha_ingreso; ?>" class="form-control" required>
+                                             <input 
+                                            type="date" 
+                                            name="fecha_ingreso"
+                                            class="form-control"
+                                            required
+                                            value="<?php echo date('Y-m-d'); ?>"
+                                            max="<?php echo date('Y-m-d'); ?>"
+                                                >
                                         </div>
                                     </div>
                                 </div>

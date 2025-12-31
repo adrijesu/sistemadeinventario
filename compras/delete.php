@@ -1,10 +1,21 @@
 <?php 
  include "../app/config.php";
 include '../layout/sesion.php';
+require_once('../app/permisos.php');
+require_once('../app/acciones.php');
+
+permitirRoles(['ADMINISTRADOR']); // seguridad extra
+
+$permisosCompras = [
+    'ADMINISTRADOR' => ['eliminar']
+];
+
+permitirAccion('eliminar', $permisosCompras);
 include '../layout/parte1.php';
 include '../app/controllers/almacen/listado_de_productos.php';
 include '../app/controllers/proveedores/listado_de_proveedores.php';
 include '../app/controllers/compras/cargar_compra.php';
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->

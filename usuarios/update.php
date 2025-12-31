@@ -4,7 +4,7 @@ include '../layout/sesion.php';
 include '../layout/parte1.php';
 include '../app/controllers/usuarios/update_usuario.php';
 include '../app/controllers/roles/listado_de_roles.php';
-
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->

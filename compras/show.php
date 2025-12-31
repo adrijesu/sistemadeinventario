@@ -5,6 +5,7 @@ include '../layout/parte1.php';
 include '../app/controllers/almacen/listado_de_productos.php';
 include '../app/controllers/proveedores/listado_de_proveedores.php';
 include '../app/controllers/compras/cargar_compra.php';
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -172,20 +173,6 @@ include '../app/controllers/compras/cargar_compra.php';
 
             <div class="row">
                 
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="">empresa</label>
-                        <input type="text" id="empresa" value="<?php echo $empresa_proveedor; ?>" class="form-control" disabled >
-                        
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="">email</label>
-                        <input type="email"  value="<?php echo $email_proveedor; ?>" id="email" class="form-control" disabled>
-                       
-                    </div>
-                </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="">direccion</label>

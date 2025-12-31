@@ -1,8 +1,13 @@
 <?php 
- include "../app/config.php";
-include '../layout/sesion.php';
+include '../app/config.php';
+include '../app/seguridad.php';
+include '../app/permisos.php';
+
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+
 include '../layout/parte1.php';
 include '../app/controllers/categorias/listado_de_categorias.php';
+include '../app/seguridad.php';
 
 ?>
 
@@ -14,6 +19,7 @@ include '../app/controllers/categorias/listado_de_categorias.php';
         <div class="row mb-2">
           <div class="col-sm-12">
             <h1 class="m-0">LISTADO DE CATEGORIAS
+              
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-create">
                   <i class="fas fa-plus" ></i> Nuevo
             </button>
@@ -72,6 +78,10 @@ include '../app/controllers/categorias/listado_de_categorias.php';
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-update<?php echo $id_categoria;?>">
                                       <i class="fas fa-pencil-alt" ></i> editar
                                 </button>
+                                <br>
+                                <button type="button" class="btn btn-danger" onclick="eliminarCategoria(<?php echo $id_categoria;?>)">
+                                      <i class="fas fa-trash"></i> eliminar
+                                    </button>
                                 
                                     <!-- modal para actualizar categorias-->
                                     <div class="modal fade" id="modal-update<?php echo $id_categoria;?>">
@@ -209,7 +219,15 @@ include '../app/controllers/categorias/listado_de_categorias.php';
           <div class="col-md-12">
             <div class="form-group">
               <label for="">Nombre de la categoria</label>
-              <input type="text" id="nombre_categoria" class="form-control" >
+              <input 
+                type="text"
+                id="nombre_categoria"
+                class="form-control"
+                required
+                minlength="3"
+                maxlength="50"
+                pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 &\-]+"
+                title="Solo letras, números, espacios y guiones">
               <small style="color:red; display:none"  id="lbl_create" >Este campo es requerido</small>
             </div>
           </div>
@@ -229,22 +247,75 @@ include '../app/controllers/categorias/listado_de_categorias.php';
 </div>
 
 <script>
-  $('#btn_create').click(function() {
-      //alert("guardar");
-      var nombre_categoria = $('#nombre_categoria').val();
-      if (nombre_categoria == "") {
-        $('#nombre_categoria').focus();
-        $('#lbl_create').css('display','block');
-      } else {
-        var url="../app/controllers/categorias/registro_de_categorias.php";
-        $.get(url,{nombre_categoria:nombre_categoria},function(datos){
-            $('#respuesta').html(datos);
-        });
-      }
+$('#btn_create').click(function () {
 
-      
-  });
+    var nombre_categoria = $('#nombre_categoria').val();
+
+    if (nombre_categoria == "") {
+        $('#nombre_categoria').focus();
+        $('#lbl_create').show();
+        return;
+    }
+
+    var url = "../app/controllers/categorias/registro_de_categorias.php";
+
+    $.get(url, { nombre_categoria: nombre_categoria }, function (respuesta) {
+
+        if (respuesta === "ok") {
+            // cerrar modal
+            $('#modal-create').modal('hide');
+
+            // limpiar campo
+            $('#nombre_categoria').val('');
+            $('#lbl_create').hide();
+
+            // recargar página para ver la nueva categoría
+            location.reload();
+
+        } else if (respuesta === "duplicado") {
+            alert("La categoría ya existe");
+        } else {
+            alert("Error al registrar");
+        }
+
+    });
+});
 </script>
 <div id="respuesta" ></div>
 
+<script>
+function eliminarCategoria(id_categoria) {
 
+  Swal.fire({
+    title: '¿Eliminar categoría?',
+    text: 'Esta acción no se puede deshacer',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+      var url = "../app/controllers/categorias/delete_de_categorias.php";
+
+      $.get(url, { id_categoria: id_categoria }, function (respuesta) {
+
+        console.log("RESPUESTA PHP:", respuesta);
+
+  if (respuesta.trim() === "ok") {
+    Swal.fire('Eliminado', 'La categoría fue eliminada', 'success')
+      .then(() => location.reload());
+  } else if (respuesta.trim() === "en_uso") {
+    Swal.fire('Error', 'La categoría está asociada a productos', 'error');
+  } else {
+    Swal.fire('Error', respuesta, 'error');
+  }
+
+});
+
+    }
+  });
+}
+</script>

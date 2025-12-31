@@ -1,11 +1,14 @@
 <?php 
+
+
 $id_venta_get = $_GET['id_venta'];
+
  include "../app/config.php";
 include '../layout/sesion.php';
 include '../layout/parte1.php';
 include '../app/controllers/ventas/cargar_venta.php';
 include '../app/controllers/clientes/cargar_cliente.php';
-
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -66,11 +69,16 @@ include '../app/controllers/clientes/cargar_cliente.php';
 
 
                                
-                               $sql_carrito = "SELECT *, pro.nombre as nombre_producto, pro.descripcion as descripcion, pro.precio_venta as precio_venta, pro.stock as stock, pro.id_producto as id_producto from tb_carrito  as car  INNER JOIN tb_almacen as pro ON car.id_producto = pro.id_producto
-                               where nro_venta= '$nro_venta;' order by id_carrito ";
-                                $query_carrito= $pdo->prepare($sql_carrito);
+                               $sql_carrito = "SELECT *, pro.nombre as nombre_producto, pro.descripcion as descripcion, 
+                                  pro.precio_venta as precio_venta, pro.stock as stock, pro.id_producto as id_producto 
+                                  FROM tb_carrito AS car 
+                                  INNER JOIN tb_almacen AS pro ON car.id_producto = pro.id_producto
+                                  WHERE car.nro_venta = :nro_venta
+                                  ORDER BY id_carrito";
+                                $query_carrito = $pdo->prepare($sql_carrito);
+                                $query_carrito->bindParam(':nro_venta', $nro_venta);
                                 $query_carrito->execute();
-                                $carrito_datos=$query_carrito->fetchAll(PDO::FETCH_ASSOC);
+                                $carrito_datos = $query_carrito->fetchAll(PDO::FETCH_ASSOC);
                                 foreach($carrito_datos as $carrito_dato) {
                                   $id_carrito = $carrito_dato['id_carrito'];
                                   $contador_de_carrito = $contador_de_carrito + 1; 
@@ -138,7 +146,7 @@ include '../app/controllers/clientes/cargar_cliente.php';
                 $nombre_cliente = $clientes_dato['nombre_cliente'];
                 $nit_ci_cliente = $clientes_dato['nit_ci_cliente'];
                 $celular_cliente = $clientes_dato['celular_cliente'];
-                $email_cliente = $clientes_dato['email_cliente'];
+                
                }
                ?>
               <div class="card-body">
@@ -164,12 +172,7 @@ include '../app/controllers/clientes/cargar_cliente.php';
                               <input type="text" value="<?php echo $celular_cliente;?>" class="form-control" id="celular_cliente" disabled>
                             </div>
                           </div>
-                          <div class="col-md-3">
-                            <div class="form-group">
-                              <label for="">Correo del cliente</label>
-                              <input type="text" value="<?php echo $email_cliente;?>" class="form-control" id="email_cliente" disabled>
-                            </div>
-                          </div>
+                          
                         </div>
               </div>
               <!-- /.card-body -->

@@ -3,6 +3,7 @@
 include '../layout/sesion.php';
 include '../layout/parte1.php';
 include '../app/controllers/usuarios/show_usuario.php';
+include '../app/seguridad.php';
 
 ?>
 

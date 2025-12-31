@@ -8,7 +8,7 @@ $sql_compras = "SELECT *, co.precio_compra as precio_compra,
                 pro.fecha_ingreso as fecha_ingreso, pro.imagen as imagen,
                 cat.nombre_categoria as nombre_categoria, us.nombres as nombre_usuario_producto,
                 prov.nombre_proveedor as nombre_proveedor, prov.celular as celular_proveedor, prov.telefono as telefono_proveedor,
-                prov.empresa as empresa_proveedor, prov.email as email_proveedor, prov.direccion as direccion_proveedor, us.nombres as nombres_usuario
+                 prov.direccion as direccion_proveedor, us.nombres as nombres_usuario
                 from tb_compras as co 
                 inner join tb_almacen as pro on co.id_producto = pro.id_producto 
                 inner join tb_categorias as cat on cat.id_categoria = pro.id_categoria
@@ -38,8 +38,7 @@ foreach($compras_datos as $compras_dato){
     $nombre_proveedor_tabla = $compras_dato['nombre_proveedor'];
     $celular_proveedor = $compras_dato['celular_proveedor'];
     $telefono_proveedor = $compras_dato['telefono_proveedor'];
-    $empresa_proveedor = $compras_dato['empresa_proveedor'];
-    $email_proveedor = $compras_dato['email_proveedor'];
+    
     $direccion_proveedor = $compras_dato['direccion_proveedor'];
     $fecha_compra = $compras_dato['fecha_compra'];
     $comprobante = $compras_dato['comprobante'];

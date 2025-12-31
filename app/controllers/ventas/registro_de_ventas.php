@@ -3,7 +3,9 @@ include '../../config.php';
 
 
 $nro_venta = $_GET['nro_venta'];
-$id_cliente = $_GET['id_cliente'];
+$id_cliente = isset($_GET['id_cliente']) && $_GET['id_cliente'] != "" 
+              ? $_GET['id_cliente'] 
+              : null;
 $total_a_cancelar = $_GET['total_a_cancelar'];
 
 
@@ -15,7 +17,12 @@ $total_a_cancelar = $_GET['total_a_cancelar'];
     VALUES (:nro_venta,:id_cliente,:total_pagado,:fyh_creacion)");
 
     $sentencia->bindParam('nro_venta',$nro_venta);
-    $sentencia->bindParam('id_cliente',$id_cliente);
+   if ($id_cliente === null) {
+    $sentencia->bindValue(':id_cliente', null, PDO::PARAM_NULL);
+} else {
+    $sentencia->bindParam('id_cliente', $id_cliente);
+}
+
     $sentencia->bindParam('total_pagado',$total_a_cancelar);
     $sentencia->bindParam('fyh_creacion',$fechaHora);
     if($sentencia->execute()){

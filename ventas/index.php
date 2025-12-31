@@ -1,10 +1,22 @@
 <?php 
+include '../app/config.php';
 
- include "../app/config.php";
-include '../layout/sesion.php';
+include '../app/seguridad.php';
+
+require_once('../app/permisos.php');
+require_once('../app/acciones.php');
+
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+
+$permisosVentas = [
+    'ADMINISTRADOR' => ['ver'],
+    'ALMACENERO'    => ['ver']
+];
+
+permitirAccion('ver', $permisosVentas);
 include '../layout/parte1.php';
 include '../app/controllers/ventas/listado_de_ventas.php';
-
+include '../app/seguridad.php';
 
 ?>
 
@@ -180,16 +192,21 @@ include '../app/controllers/ventas/listado_de_ventas.php';
                                                 </button>
                                             </div>
                                             <?php 
-                                            $sql_clientes = "SELECT * FROM tb_clientes where id_cliente = '$id_cliente'";
-                                            $query_clientes= $pdo->prepare($sql_clientes);
-                                            $query_clientes->execute();
-                                            $clientes_datos=$query_clientes->fetchAll(PDO::FETCH_ASSOC);
-                                            foreach ($clientes_datos as $clientes_dato){
-                                               $nombre_cliente = $clientes_dato['nombre_cliente'];
-                                               $nit_ci_cliente = $clientes_dato['nit_ci_cliente']; 
-                                               $celular_cliente = $clientes_dato['celular_cliente']; 
-                                               $email_cliente = $clientes_dato['email_cliente'];      
-                                            }
+                                           if ($id_cliente != "" && $id_cliente != null) {
+                                              $sql_clientes = "SELECT * FROM tb_clientes WHERE id_cliente = '$id_cliente'";
+                                              $query_clientes = $pdo->prepare($sql_clientes);
+                                              $query_clientes->execute();
+                                              $clientes_datos = $query_clientes->fetchAll(PDO::FETCH_ASSOC);
+                                              foreach ($clientes_datos as $clientes_dato){
+                                                  $nombre_cliente = $clientes_dato['nombre_cliente'];
+                                                  $nit_ci_cliente = $clientes_dato['nit_ci_cliente']; 
+                                                  $celular_cliente = $clientes_dato['celular_cliente']; 
+                                              }
+                                          } else {
+                                              $nombre_cliente = "SIN CLIENTE";
+                                              $nit_ci_cliente = "S/N";
+                                              $celular_cliente = "S/N";
+                                          }
                                             ?>
                                             <div class="modal-body">
                                                 
@@ -199,7 +216,7 @@ include '../app/controllers/ventas/listado_de_ventas.php';
                                                     </div>
 
                                                     <div class="form-group">
-                                                    <label for="">Nit/Ci del cliente</label>
+                                                    <label for="">DNI/RUC</label>
                                                     <input type="text" value="<?php echo  $nit_ci_cliente?>" name="nit_ci_cliente" class="form-control" disabled>
                                                     </div>
 
@@ -208,10 +225,7 @@ include '../app/controllers/ventas/listado_de_ventas.php';
                                                     <input type="text" value="<?php echo  $celular_cliente?>" name="celular_cliente" class="form-control" disabled>
                                                     </div>
 
-                                                    <div class="form-group">
-                                                    <label for="">Correo del cliente</label>
-                                                    <input type="email" value="<?php echo  $email_cliente?>" name="email_cliente" class="form-control" disabled>
-                                                    </div>
+                                                    
 
                                                     
                                                 
@@ -228,8 +242,23 @@ include '../app/controllers/ventas/listado_de_ventas.php';
                             <td>
                                 <center>
                                     <a href=" show.php?id_venta=<?php echo $id_venta;?>" class="btn btn-info"><i class="fa fa-eye"></i> Ver</a>
+
+                                      
+                                      <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
                                     <a href="delete.php?id_venta=<?php echo $id_venta;?>&nro_venta=<?php echo $nro_venta;?> " class="btn btn-danger"><i class="fa fa-trash"></i> Eliminar</a>
-                                    <a href="factura.php?id_venta=<?php echo $id_venta;?>&nro_venta=<?php echo $nro_venta;?> " class="btn btn-success"><i class="fa fa-print"></i> Imprimir</a>
+
+
+                                   <?php if (!empty($id_cliente)) : ?>
+                                      <a href="factura.php?id_venta=<?php echo $id_venta;?>&nro_venta=<?php echo $nro_venta;?>"
+                                        class="btn btn-success">
+                                        <i class="fa fa-print"></i> Imprimir
+                                      </a>
+                                  <?php else : ?>
+                                      <button class="btn btn-secondary" disabled>
+                                          <i class="fa fa-ban"></i> Sin cliente
+                                      </button>
+                                  <?php endif; ?>
+                                    <?php endif; ?>
                                 </center>
                             </td>
                           </tr>
@@ -237,7 +266,7 @@ include '../app/controllers/ventas/listado_de_ventas.php';
                             }                    
                         ?> 
                     </tbody>
-                    </tfoot>
+                    
                   </div>  
                 </table>
               </div>

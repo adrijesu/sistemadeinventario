@@ -1,6 +1,16 @@
 <?php 
  include "../app/config.php";
 include '../layout/sesion.php';
+require_once('../app/permisos.php');
+require_once('../app/acciones.php');
+
+permitirRoles(['ADMINISTRADOR']); // doble seguridad
+
+$permisosAlmacen = [
+    'ADMINISTRADOR' => ['eliminar']
+];
+
+permitirAccion('eliminar', $permisosAlmacen);
 include '../layout/parte1.php';
 include '../app/controllers/almacen/cargar_producto.php';
 

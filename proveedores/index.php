@@ -1,8 +1,13 @@
 <?php 
- include "../app/config.php";
-include '../layout/sesion.php';
+include '../app/config.php';
+include '../app/seguridad.php';
+include '../app/permisos.php';
+
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+
 include '../layout/parte1.php';
 include '../app/controllers/proveedores/listado_de_proveedores.php';
+include '../app/seguridad.php';
 
 ?>
 
@@ -14,9 +19,11 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
         <div class="row mb-2">
           <div class="col-sm-12">
             <h1 class="m-0">LISTADO DE PROVEEDORES
+              <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-create">
                   <i class="fas fa-plus" ></i> Nuevo
             </button>
+            <?php endif; ?>
             </h1>
             
                 
@@ -53,9 +60,8 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
                         <th><center>NRO</center></th>
                         <th><center>Nombre del proveedor</center></th>
                         <th><center>Celular</center></th>
-                        <th><center>Telefono</center></th>
-                        <th><center>Empresa</center></th>
-                        <th><center>Email</center></th>
+                        <th><center>descripcion</center></th>
+                        
                         <th><center>Direccion</center></th>
                         <th><center>Acciones</center></th>
                     </tr>
@@ -76,18 +82,18 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
                                 <?php echo $proveedores_dato['celular'];?>
                               </a>
                             </td>
-                            <td><?php echo $proveedores_dato['telefono'];?></td>
-                            <td><?php echo $proveedores_dato['empresa'];?></td>
-                            <td><?php echo $proveedores_dato['email'];?></td>
+                            <td><?php echo $proveedores_dato['descripcion'];?></td>
+                            
                             <td><?php echo $proveedores_dato['direccion'];?></td>
                             
                             <td>
                               
                               <div class="btn-group">
+                                <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-update<?php echo $id_proveedor;?>">
                                       <i class="fas fa-pencil-alt" ></i> editar
                                 </button>
-                                
+                                <?php endif; ?>
                                     <!-- modal para actualizar proveedores-->
                                     <div class="modal fade" id="modal-update<?php echo $id_proveedor;?>">
                                       <div class="modal-dialog">
@@ -118,7 +124,7 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
                                           </div>
 
                                           <div class="row">
-                                              <div class="col-md-6">
+                                            <div class="col-md-6">
                                                   <div class="form-group">
                                                       <label for="">telefono</label>
                                                       <input type="number" id="telefono<?php echo $id_proveedor;?>" value="<?php echo $proveedores_dato['telefono']; ?>" class="form-control" >
@@ -126,21 +132,15 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
                                               </div>
                                               <div class="col-md-6">
                                                   <div class="form-group">
-                                                      <label for="">empresa</label>
-                                                      <input type="text" id="empresa<?php echo $id_proveedor;?>" value="<?php echo $proveedores_dato['empresa']; ?>" class="form-control" >
-                                                      <small style="color:red; display:none"  id="lbl_empresa<?php echo $id_proveedor;?>">Este campo es requerido</small>
+                                                      <label for="">descripcion</label>
+                                                      <input type="text" id="descripcion<?php echo $id_proveedor;?>" value="<?php echo $proveedores_dato['descripcion']; ?>" class="form-control" >
                                                   </div>
                                               </div>
+                                              
                                           </div>
 
                                           <div class="row">
-                                              <div class="col-md-6">
-                                                  <div class="form-group">
-                                                      <label for="">email</label>
-                                                      <input type="email" id="email<?php echo $id_proveedor;?>" value="<?php echo $proveedores_dato['email']; ?>" class="form-control" >
-                                                      <small style="color:red; display:none"  id="lbl_email<?php echo $id_proveedor;?>">Este campo es requerido</small>
-                                                  </div>
-                                              </div>
+                                              
                                               <div class="col-md-6">
                                                   <div class="form-group">
                                                       <label for="">direccion</label>
@@ -200,10 +200,11 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
                               
 
                               <div class="btn-group">
+                                <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-delete<?php echo $id_proveedor;?>">
                                       <i class="fas fa-trash" ></i> borrar
                                 </button>
-                                
+                                <?php endif; ?>
                                     <!-- modal para borrar proveedores-->
                                     <div class="modal fade" id="modal-delete<?php echo $id_proveedor;?>">
                                       <div class="modal-dialog">
@@ -234,7 +235,7 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
                                           </div>
 
                                           <div class="row">
-                                              <div class="col-md-6">
+                                            <div class="col-md-6">
                                                   <div class="form-group">
                                                       <label for="">telefono</label>
                                                       <input type="number" id="telefono<?php echo $id_proveedor;?>" value="<?php echo $proveedores_dato['telefono']; ?>" class="form-control" disabled>
@@ -242,21 +243,15 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
                                               </div>
                                               <div class="col-md-6">
                                                   <div class="form-group">
-                                                      <label for="">empresa</label>
-                                                      <input type="text" id="empresa<?php echo $id_proveedor;?>" value="<?php echo $proveedores_dato['empresa']; ?>" class="form-control" disabled>
-                                                      <small style="color:red; display:none"  id="lbl_empresa<?php echo $id_proveedor;?>">Este campo es requerido</small>
+                                                      <label for="">descripcion</label>
+                                                      <input type="text" id="descripcion<?php echo $id_proveedor;?>" value="<?php echo $proveedores_dato['descripcion']; ?>" class="form-control" disabled>
                                                   </div>
                                               </div>
+                                              
                                           </div>
 
                                           <div class="row">
-                                              <div class="col-md-6">
-                                                  <div class="form-group">
-                                                      <label for="">email</label>
-                                                      <input type="email" id="email<?php echo $id_proveedor;?>" value="<?php echo $proveedores_dato['email']; ?>" class="form-control" disabled >
-                                                      <small style="color:red; display:none"  id="lbl_email<?php echo $id_proveedor;?>">Este campo es requerido</small>
-                                                  </div>
-                                              </div>
+                                              
                                               <div class="col-md-6">
                                                   <div class="form-group">
                                                       <label for="">direccion</label>
@@ -388,21 +383,17 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
                         <input type="number" id="telefono" class="form-control" >
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="">empresa</label>
-                        <input type="text" id="empresa" class="form-control" >
-                        <small style="color:red; display:none"  id="lbl_empresa" >Este campo es requerido</small>
-                    </div>
-                </div>
+                
             </div>
 
             <div class="row">
+                
                 <div class="col-md-6">
+                  
                     <div class="form-group">
-                        <label for="">email</label>
-                        <input type="email" id="email" class="form-control" >
-                        <small style="color:red; display:none"  id="lbl_email" >Este campo es requerido</small>
+                        <label for="">descripcion</label>
+                        <input type="text" id="descripcion" class="form-control" >
+                        <small style="color:red; display:none"  id="lbl_descripcion" >Este campo es requerido</small>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -434,8 +425,7 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
       var nombre_proveedor = $('#nombre_proveedor').val();
       var celular = $('#celular').val();
       var telefono = $('#telefono').val();
-      var empresa = $('#empresa').val();
-      var email = $('#email').val();
+      var descripcion = $('#descripcion').val();
       var direccion = $('#direccion').val();
 
 
@@ -445,15 +435,12 @@ include '../app/controllers/proveedores/listado_de_proveedores.php';
       } else if (celular == ""){
         $('#celular').focus();
         $('#lbl_celular').css('display','block');
-      }else if (empresa == ""){
-        $('#empresa').focus();
-        $('#lbl_empresa').css('display','block');
-      }else if (direccion == ""){
+      } else if (direccion == ""){
         $('#direccion').focus();
         $('#lbl_direccion').css('display','block');
       }else{
         var url="../app/controllers/proveedores/create.php";
-        $.get(url,{nombre_proveedor:nombre_proveedor,celular:celular,telefono:telefono,empresa:empresa,email:email,direccion:direccion},function(datos){
+        $.get(url,{nombre_proveedor:nombre_proveedor,celular:celular,telefono:telefono,descripcion:descripcion,direccion:direccion},function(datos){
             $('#respuesta').html(datos);
         });
       }

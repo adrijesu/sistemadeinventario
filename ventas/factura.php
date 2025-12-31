@@ -1,8 +1,12 @@
 <?php
+
+
 // Include the main TCPDF library (search for installation path).
 require_once('../app/TCPDF-main/tcpdf.php');
 include '../app/config.php';
 include '../app/controllers/ventas/literal.php';
+
+
 
 
 session_start();
@@ -27,6 +31,9 @@ if(isset($_SESSION['sesion_email'])){
 $id_venta_get = $_GET['id_venta'];
 $nro_venta_get = $_GET['nro_venta'];
 
+$serie = 'B001';
+$numero_boleta = str_pad($id_venta_get, 6, '0', STR_PAD_LEFT);
+
 $sql_ventas = "SELECT *, cli.nombre_cliente as nombre_cliente, cli.nit_ci_cliente as nit_ci_cliente
             FROM tb_ventas as ve inner join tb_clientes as cli on cli.id_cliente= ve.id_cliente where ve.id_venta='$id_venta_get'";
 $query_ventas= $pdo->prepare($sql_ventas);
@@ -39,6 +46,7 @@ foreach($ventas_datos as $ventas_dato){
    $nombre_cliente = $ventas_dato['nombre_cliente'];
    $total_pagado = $ventas_dato['total_pagado'];
 }
+
 //convierte precio total a literal
 $monto_literal = numtoletras($total_pagado);
 
@@ -100,39 +108,40 @@ $pdf->AddPage();
 
 
 $html = '
-<table border="0" style="font-size: 10px">
-    <tr>
-        <td style="text-align: center;width: 230px">
-            <img src="' . $imagePath . '" width="80px" alt=""> <br><br>
-            <B>SISTEMA DE VENTAS SYSVENTAS</B><br>
-            zona alto lima 1ra seccion Av. Litoral #231 <br>
-            9558715- 9885478<br>
-            Arequipa - Peru
-        </td>
-        <td style="width: 150px"></td>
-            <td style="font-size: 16px; width: 290px "><br><br><br><br>
-                <B>NIT: </B> 100001254 <br>
-                <B>Nro de factura: </B> '.$id_venta_get.' <br>
-                <B>Nro de autorizacion: </B>100001254
-                <p><b style="text-align: center">ORIGINAL</b></p>
-            </td>
-    </tr>
+<table border="0" style="font-size:10px">
+<tr>
+    <td style="width:230px; text-align:center">
+        <b>SISTEMA DE INVENTARIO INVENTAPRO</b><br>
+        RUC: 100001254<br>
+        Av. Litoral #231 – Alto Lima<br>
+        Arequipa – Perú<br>
+        Tel: 9558715
+    </td>
 
+    <td style="width:150px"></td>
+
+    <td style="width:290px; border:1px solid #000; text-align:center">
+        <b>BOLETA DE VENTA</b><br>
+        '.$serie.'-'.$numero_boleta.'<br><br>
+        Fecha: '.$fecha.'
+    </td>
+</tr>
 </table>
 
-<p style="text-align: center; font-size: 25px"><b>FACTURA</b></p>
+<br>
+
+
+
+<p style="text-align: center; font-size: 25px"><b>BOLETA DE VENTA</b></p>
 
 <div style="border: 1px solid #000000">
-<table border="0" cellspacing="6">
+<table border="0" cellpadding="4" style="font-size:11px">
 <tr>
-    <td><b>Fecha:</b>'.$fecha.'</td>
-    <td></td>
-    <td><b>Nit/CI:</b> '.$nit_ci_cliente.'</td>
-</tr>
-<tr>
-    <td colspan="3"><b>Señor(es):</b>'.$nombre_cliente.'</td>
+    <td><b>Cliente:</b> '.$nombre_cliente.'</td>
+    <td><b>DNI:</b> '.$nit_ci_cliente.'</td>
 </tr>
 </table>
+<br>
 </div>
 
 <br><br>
@@ -174,34 +183,55 @@ $html .='
     <td>'.$carrito_dato['nombre_producto'].'</td>
     <td>'.$carrito_dato['descripcion'].'</td>
     <td style="text-align: center">'.$carrito_dato['cantidad'].'</td>
-    <td style="text-align: center">S/.'.$carrito_dato['precio_venta'].'</td>
-    <td style="text-align: center">'.$subtotal.'</td>
+    <td style="text-align: center">S/. '.number_format($carrito_dato['precio_venta'], 0).'</td>
+
+    <td style="text-align: center">S/. '.number_format($subtotal, 0).'</td>
+
 </tr>
 ';
 
 }
-$html .='
-    
-    <tr style="text-align: center;background-color: #d6d6d6">
-        <td colspan="3" style="text-align: right"><b>Total</b></td>
-        <td style="text-align: center;background-color: #d6d6d6">'.$cantidad_total.'</td>
-        <td style="text-align: center;background-color: #d6d6d6">S/.'.$precio_unitario_total.'</td>
-        <td style="text-align: center;background-color: #d6d6d6">S/.'.$precio_total.'</td>
-    </tr>
+$igv = 0.18;
+
+$subtotal_sin_igv = $precio_total / (1 + $igv);
+$igv_monto = $precio_total - $subtotal_sin_igv;
+
+$total = number_format($precio_total, 0);
+$subtotal = number_format($subtotal_sin_igv, 0);
+$igv_monto = number_format($igv_monto, 0);
+$html .= '
+<table border="0" cellpadding="5" style="font-size:11px" align="right">
+<tr>
+    <td align="right"><b>SUBTOTAL:</b></td>
+    <td align="right">S/. '.$subtotal.'</td>
+</tr>
+<tr>
+    <td align="right"><b>IGV (18%):</b></td>
+    <td align="right">S/. '.$igv_monto.'</td>
+</tr>
+<tr>
+    <td align="right"><b>TOTAL:</b></td>
+    <td align="right"><b>S/. '.$total.'</b></td>
+</tr>
 </table>
+<br><br>
 
 <P style="text-align: right">
-    <b>Monto total: </b>S/. '.$precio_total.'
+    <b>Monto total: </b>S/. '.number_format($precio_total, 0).'
+
 </P>
 <P>
-    <b>Son: </b>'.$monto_literal.'
+    <p><b>Son:</b> '.$monto_literal.'</p>
 </P>
 <br>
 ---------------------------------------------------- <br>
 <b>USUARIO: </b>'.$nombres_sesion.' <br>
 
-<p style="text-align: center">"ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAIS, EL USO ILICITO DE ESTA SERA SANCIONADO DEACUERDO A LA LEY</p>
-<P style="text-align: center"><b>GRACIAS POR SU PREFERENCIA</b></P>
+<p style="font-size:9px; text-align:center">
+Representación impresa de la Boleta de Venta – SUNAT
+</p>
+
+<p style="text-align:center"><b>GRACIAS POR SU PREFERENCIA</b></p>
 ';
 
 
@@ -220,8 +250,8 @@ $style = array(
     'module_heigth' => 1
 );
 
-$QR = 'Factura realizada por el sistema de ventas de Adrian, al cliente '.$nombre_cliente.' con Nit/CI : '.$nit_ci_cliente.'
- en Fecha:  '.$fecha.' con el monto total de '.$precio_total.'';
+$QR = 'RUC:100001254|BOLETA|'.$serie.'-'.$numero_boleta.'|TOTAL:S/.'.$total.'|FECHA:'.$fecha;
+;
 
 $pdf ->write2DBarcode($QR,'QRCODE,L',170,240,40,40,$style);
 
@@ -231,12 +261,7 @@ $pdf ->write2DBarcode($QR,'QRCODE,L',170,240,40,40,$style);
 // Close and output PDF document
 // This method has several options, check the source code documentation for more information.
 $pdf->Output('example_001.pdf', 'I');
-echo "Ruta de la imagen: $imagePath<br>";
-if (is_readable($imagePath)) {
-    echo "El archivo es legible.<br>";
-} else {
-    echo "El archivo no es legible.<br>";
-}
+
 
 //============================================================+
 // END OF FILE

@@ -50,7 +50,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </li>
      
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Sistema de ventas</a>
+        <a href="#" class="nav-link">Sistema de inventario</a>
       </li>
     </ul>
 
@@ -75,7 +75,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Brand Logo -->
     <a href="<?php echo $URL;?>" class="brand-link">
       <img src="<?php echo $URL;?>/public/images/logo.jpg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">SIS VENTAS</span>
+      <span class="brand-text font-weight-light">INVENTAPRO</span>
     </a>
 
     <!-- Sidebar -->
@@ -86,7 +86,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <img src="<?php echo $URL;?>/public/templates/AdminLTE-3.2.0/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block"><?php echo $nombres_sesion?></a>
+          <a href="#" class="d-block"><?php echo $_SESSION['rol']; ?></a>
         </div>
       </div>
 
@@ -101,6 +101,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           
           
           
+         <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'ADMINISTRADOR') : ?>
           <li class="nav-item">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-users"></i>
@@ -116,7 +117,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <p>Listado de usuarios</p>
                 </a>
               </li>
-              <li class="nav-item ">
+              <li class="nav-item">
+                
                 <a href="<?php echo $URL;?>/usuarios/create.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Creacion de usuarios</p>
@@ -124,32 +126,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
             </ul>
           </li>
+          <?php endif; ?>
 
 
 
-          <li class="nav-item">
-            <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-address-card"></i>
-              <p>
-                ROLES
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="<?php echo $URL;?>/roles" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Listado de ROLES</p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="<?php echo $URL;?>/roles/create.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Creacion de roles</p>
-                </a>
-              </li>
-            </ul>
-          </li>
+          <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'ADMINISTRADOR') : ?>
+            <li class="nav-item">
+              <a href="#" class="nav-link active">
+                <i class="nav-icon fas fa-address-card"></i>
+                <p>
+                  ROLES
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="<?php echo $URL;?>/roles" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Listado de ROLES</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="<?php echo $URL;?>/roles/create.php" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Creacion de roles</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <?php endif; ?>
           
           
           <li class="nav-item">
@@ -172,29 +177,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
 
-          <li class="nav-item">
-            <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-list"></i>
-              <p>
-                ALMACEN
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="<?php echo $URL;?>/almacen" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Listado de productos</p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="<?php echo $URL;?>/almacen/create.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Creacion de productos</p>
-                </a>
-              </li>
-            </ul>
-          </li>
+          <?php if (isset($_SESSION['rol']) && in_array($_SESSION['rol'], ['ADMINISTRADOR','ALMACENERO'])) : ?>
+  <li class="nav-item">
+    <a href="#" class="nav-link active">
+      <i class="nav-icon fas fa-list"></i>
+      <p>
+        ALMACEN
+        <i class="right fas fa-angle-left"></i>
+      </p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item">
+        <a href="<?php echo $URL;?>/almacen" class="nav-link">
+          <i class="far fa-circle nav-icon"></i>
+          <p>Listado de productos</p>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="<?php echo $URL;?>/almacen/create.php" class="nav-link">
+          <i class="far fa-circle nav-icon"></i>
+          <p>Creación de productos</p>
+        </a>
+      </li>
+    </ul>
+  </li>
+<?php endif; ?>
 
 
           <li class="nav-item">
@@ -242,29 +249,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </li>
 
 
-          <li class="nav-item">
-            <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-shopping-basket"></i>
-              <p>
-                VENTAS
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="<?php echo $URL;?>/ventas" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Listado de ventas</p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="<?php echo $URL;?>/ventas/create.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Realizar ventas</p>
-                </a>
-              </li>
-            </ul>
-          </li>
+          <?php if (isset($_SESSION['rol']) && in_array($_SESSION['rol'], ['ADMINISTRADOR','VENDEDOR'])) : ?>
+<li class="nav-item">
+  <a href="#" class="nav-link active">
+    <i class="nav-icon fas fa-shopping-basket"></i>
+    <p>
+      VENTAS
+      <i class="right fas fa-angle-left"></i>
+    </p>
+  </a>
+  <ul class="nav nav-treeview">
+    <li class="nav-item">
+      <a href="<?php echo $URL;?>/ventas" class="nav-link">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Listado de ventas</p>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="<?php echo $URL;?>/ventas/create.php" class="nav-link">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Realizar ventas</p>
+      </a>
+    </li>
+  </ul>
+</li>
+<?php endif; ?>
 
 
           <li class="nav-item">

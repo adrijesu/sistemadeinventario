@@ -1,30 +1,39 @@
 <?php
 include '../../config.php';
+session_start();
 
-$nombre_categoria = $_GET['nombre_categoria'];
+$nombre_categoria = trim($_GET['nombre_categoria']);
 
-$sentencia = $pdo->prepare("INSERT INTO tb_categorias
-    (nombre_categoria, fyh_creacion) 
-    VALUES (:nombre_categoria,:fyh_creacion)");
+// validar vacío
+if ($nombre_categoria == "") {
+    echo "error_vacio";
+    exit();
+}
 
-    $sentencia->bindParam('nombre_categoria',$nombre_categoria);
-    $sentencia->bindParam('fyh_creacion',$fechaHora);
-    if($sentencia->execute()){
-    
-    session_start();
-    $_SESSION['mensaje'] = "Se registro la categoria Correctamente";
-    $_SESSION['icono']="success";
-    //header('location: '.$URL.'/categorias');
-        ?>
-        <script>
-            location.href = "<?php echo $URL; ?>/categorias";
-        </script>
+// validar duplicado
+$sql = "SELECT COUNT(*) FROM tb_categorias WHERE nombre_categoria = :nombre_categoria";
+$query = $pdo->prepare($sql);
+$query->bindParam(':nombre_categoria', $nombre_categoria);
+$query->execute();
 
-        <?php
+if ($query->fetchColumn() > 0) {
+    echo "duplicado";
+    exit();
+}
 
-    }else{
-        session_start();
-        $_SESSION['mensaje'] = "no se pudo registrar";
-        header('location: '.$URL.'/categorias');
+// insertar
+$sentencia = $pdo->prepare("
+    INSERT INTO tb_categorias (nombre_categoria, fyh_creacion)
+    VALUES (:nombre_categoria, :fyh_creacion)
+");
 
-    }
+$sentencia->bindParam(':nombre_categoria', $nombre_categoria);
+$sentencia->bindParam(':fyh_creacion', $fechaHora);
+
+if ($sentencia->execute()) {
+    $_SESSION['mensaje'] = "Se registró la categoría correctamente";
+    $_SESSION['icono'] = "success";
+    echo "ok";
+} else {
+    echo "error";
+}

@@ -1,11 +1,21 @@
 <?php 
  include "../app/config.php";
 include '../layout/sesion.php';
+include '../app/acciones.php';
+include '../app/permisos.php';
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+
+$permisosVentas = [
+    'ADMINISTRADOR' => ['crear'],
+    'ALMACENERO'    => ['crear']
+];
+
+permitirAccion('crear', $permisosVentas);
 include '../layout/parte1.php';
 include '../app/controllers/ventas/listado_de_ventas.php';
 include '../app/controllers/almacen/listado_de_productos.php';
 include '../app/controllers/clientes/listado_de_clientes.php';
-
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -77,7 +87,7 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                                                 <th><center>Codigo</center></th>
                                                 <th><center>Imagen</center></th>
                                                 <th><center>Nombre</center></th>
-                                                <th><center>Descipcion</center></th>
+                                                <th><center>Descripcion</center></th>
                                                 <th><center>Stock</center></th>
                                                 
                                                 <th><center>Precio compra</center></th>
@@ -108,9 +118,9 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                                                                 var producto = "<?php echo $productos_dato['nombre']; ?>";
                                                                 $('#producto').val(producto);
 
-                                                                var descripcion = "<?php echo $productos_dato['descripcion']; ?>";
+                                                                var descripcion = <?php echo json_encode($productos_dato['descripcion']); ?>;
                                                                 $('#descripcion').val(descripcion);
-
+                                                                
                                                                 var precio_venta = "<?php echo $productos_dato['precio_venta']; ?>";
                                                                 $('#precio_venta').val(precio_venta);
 
@@ -157,7 +167,7 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                                                 <div class="col-md-5">
                                                     <div class="form-group">
                                                         <label for="">Descripcion</label>
-                                                        <input type="text" class="form-control" name="" id="descripcion" disabled>
+                                                       <textarea name="" id="descripcion" cols="30" rows="3" class="form-control"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -226,7 +236,7 @@ include '../app/controllers/clientes/listado_de_clientes.php';
 
                                $nro_venta = $contador_de_ventas + 1;
                                $sql_carrito = "SELECT *, pro.nombre as nombre_producto, pro.descripcion as descripcion, pro.precio_venta as precio_venta, pro.stock as stock, pro.id_producto as id_producto from tb_carrito  as car  INNER JOIN tb_almacen as pro ON car.id_producto = pro.id_producto
-                               where nro_venta= '$nro_venta;' order by id_carrito ";
+                               where nro_venta= '$nro_venta' order by id_carrito ";
                                 $query_carrito= $pdo->prepare($sql_carrito);
                                 $query_carrito->execute();
                                 $carrito_datos=$query_carrito->fetchAll(PDO::FETCH_ASSOC);
@@ -259,7 +269,7 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                                     </td>
                                     <td>
                                       <form action="../app/controllers/ventas/borrar_carrito.php" method="post">
-                                        <input type="text" name="" value="<?php echo $id_carrito;?>" hidden>
+                                        <input type="text" name="id_carrito" value="<?php echo $id_carrito;?>" hidden>
                                         <button type="sumit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Borrar</button>
                                       </form>
                                     </td>
@@ -330,9 +340,9 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                                                 <th><center>NRO</center></th>
                                                 <th><center>Seleccionar</center></th>
                                                 <th><center>Nombre del cliente</center></th>
-                                                <th><center>Nit/CI</center></th>
+                                                <th><center>DNI/RUC</center></th>
                                                 <th><center>Celular</center></th>
-                                                <th><center>Correo</center></th>
+
                                         
                                             </tr>
                                         </thead>
@@ -360,8 +370,7 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                                                         var celular_cliente = '<?php echo $clientes_dato['celular_cliente'];?>';
                                                         $('#celular_cliente').val(celular_cliente);
 
-                                                        var email_cliente = '<?php echo $clientes_dato['email_cliente'];?>';
-                                                        $('#email_cliente').val(email_cliente);
+                                                        
 
                                                         $('#modal-buscar_cliente').modal('toggle');
 
@@ -371,7 +380,7 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                                                     <td><?php echo $clientes_dato['nombre_cliente']?></td>
                                                     <td><center><?php echo $clientes_dato['nit_ci_cliente']?></center></td>
                                                     <td><center><?php echo $clientes_dato['celular_cliente']?></center></td>
-                                                    <td><center><?php echo $clientes_dato['email_cliente']?></center></td>
+                                                    
                                                   </tr>
                                                 <?php
                                                     }                    
@@ -398,7 +407,7 @@ include '../app/controllers/clientes/listado_de_clientes.php';
 
                           <div class="col-md-3">
                             <div class="form-group">
-                              <label for="">NIT/CI del cliente</label>
+                              <label for="">DNI/RUC</label>
                               <input type="text" class="form-control" id="nit_ci_cliente">
                             </div>
                           </div>
@@ -409,12 +418,7 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                               <input type="text" class="form-control" id="celular_cliente">
                             </div>
                           </div>
-                          <div class="col-md-3">
-                            <div class="form-group">
-                              <label for="">Correo del cliente</label>
-                              <input type="text" class="form-control" id="email_cliente">
-                            </div>
-                          </div>
+                          
                         </div>
               </div>
               <!-- /.card-body -->
@@ -473,13 +477,13 @@ include '../app/controllers/clientes/listado_de_clientes.php';
                           var id_cliente = $('#id_cliente').val();
                           var total_a_cancelar = $('#total_a_cancelar').val();
                           
-                          if(id_cliente==""){
-                            alert("Debe llenar los datos del cliente");
-                          }else{
+                            if(id_cliente == ""){
+                          id_cliente = null;
+                      }
                             
                             actualizar_stock();
                             guardar_venta();
-                          }
+                          
                           
                           
                           function actualizar_stock(){
@@ -607,33 +611,108 @@ include '../app/controllers/clientes/listado_de_clientes.php';
               </button>
           </div>
           <div class="modal-body">
-            <form action="../app/controllers/clientes/guardar_clientes.php" method="post">
-                <div class="form-group">
-                  <label for="">Nombre del cliente</label>
-                  <input type="text" name="nombre_cliente" class="form-control">
-                </div>
+            <form action="../app/controllers/clientes/guardar_clientes.php"
+      method="post"
+      onsubmit="return validarFormularioCliente();">
 
-                <div class="form-group">
-                  <label for="">Nit/Ci del cliente</label>
-                  <input type="text" name="nit_ci_cliente" class="form-control">
-                </div>
+    <div class="form-group">
+        <label>Nombre del cliente</label>
+        <input type="text" name="nombre_cliente" class="form-control" required>
+    </div>
 
-                <div class="form-group">
-                  <label for="">Celular del cliente</label>
-                  <input type="text" name="celular_cliente" class="form-control">
-                </div>
+    <div class="form-group">
+    <label>DNI / RUC</label>
+    <input type="text"
+           name="nit_ci_cliente"
+           id="nit_ci_cliente"
+           class="form-control"
+           maxlength="11"
+           required
+           oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+</div>
 
-                <div class="form-group">
-                  <label for="">Correo del cliente</label>
-                  <input type="email" name="email_cliente" class="form-control">
-                </div>
+<div class="form-group">
+    <label>Celular del cliente</label>
+    <input type="text"
+           name="celular_cliente"
+           id="celular"
+           class="form-control"
+           maxlength="9"
+           required
+           oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+</div>
 
-                <div class="form-group">
-                  <button type="submit" class="btn btn-warning btn-block">Guardar cliente</button>
-                </div>
-            </form>
+    <div class="form-group">
+        <label>Correo del cliente</label>
+        <input type="email" name="email_cliente" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-warning btn-block">
+        Guardar cliente
+    </button>
+
+</form>
+
           </div>                          
       </div>
       <!-- /.modal-content -->
       </div>
     </div>
+
+    <script>
+document.getElementById('dni_ruc').addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+</script>
+
+<script>
+document.getElementById('celular').addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+</script>
+
+<script>
+function validarCelular() {
+    const cel = document.getElementById('celular_cliente').value;
+
+    if (cel.length !== 9) {
+        alert('El celular debe tener 9 dígitos');
+        return false;
+    }
+
+    if (!cel.startsWith('9')) {
+        alert('El celular debe empezar con 9');
+        return false;
+    }
+
+    return true;
+}
+</script>
+<script>
+function validarFormularioCliente() {
+    var dni_ruc = document.getElementById('nit_ci_cliente').value.trim();
+    var celular = document.getElementById('celular').value.trim();
+
+    // Expresiones regulares
+    var dniRegex = /^[0-9]{8}$/;       // DNI: 8 dígitos
+    var rucRegex = /^(10|20)[0-9]{9}$/; // RUC: 11 dígitos que empiezan con 10 o 20
+    var celularRegex = /^9[0-9]{8}$/;   // Celular: 9 dígitos empezando con 9
+
+    // Validación DNI/RUC
+    if (!(dniRegex.test(dni_ruc) || rucRegex.test(dni_ruc))) {
+        alert('El DNI debe tener 8 dígitos o el RUC 11 dígitos válidos');
+        document.getElementById('nit_ci_cliente').focus();
+        return false;
+    }
+
+    // Validación celular
+    if (!celularRegex.test(celular)) {
+        alert('El celular debe tener 9 dígitos y empezar con 9');
+        document.getElementById('celular').focus();
+        return false;
+    }
+
+    // Todo correcto, permite enviar el formulario
+    return true;
+}
+</script>

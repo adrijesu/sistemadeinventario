@@ -1,8 +1,8 @@
 <?php
 include '../../config.php';
-
+ session_start();
 $id_rol = $_POST['id_rol'];
-$rol = $_POST['rol'];
+$rol = strtoupper(trim($_POST['rol']));
 
 
         $sentencia = $pdo->prepare("UPDATE tb_roles 
@@ -18,13 +18,13 @@ $rol = $_POST['rol'];
         $sentencia->bindParam('id_rol',$id_rol);
         
         if($sentencia->execute()){
-            session_start();
+            
             $_SESSION['mensaje'] = "Se actualizo Correctamente";
             $_SESSION['icono'] = "success";
             header('location: '.$URL.'/roles');
         }else{
             
-            session_start();
+           
             $_SESSION['mensaje'] = "error no se pudo actualizar";
             $_SESSION['icono'] = "error";
             header('location: '.$URL.'/roles/update.php?id='.$id_rol);

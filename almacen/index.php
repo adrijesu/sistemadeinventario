@@ -1,6 +1,14 @@
 <?php 
- include "../app/config.php";
-include '../layout/sesion.php';
+include '../app/config.php';
+include '../app/seguridad.php';
+include '../app/permisos.php';
+
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+$permisosAlmacen = [
+    'ADMINISTRADOR' => ['ver','crear','editar','eliminar'],
+    'ALMACENERO'    => ['ver','crear']
+];
+
 include '../layout/parte1.php';
 include '../app/controllers/almacen/listado_de_productos.php';
 
@@ -31,6 +39,11 @@ include '../app/controllers/almacen/listado_de_productos.php';
             <div class="card card-outline card-primary">
               <div class="card-header">
                 <h3 class="card-title">Productos Registrados</h3>
+                  
+                <button type="button" class="btn btn-primary">
+                  <a href="<?php echo $URL;?>/almacen/create.php">Nuevo</a>
+                </button>
+
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
@@ -50,13 +63,13 @@ include '../app/controllers/almacen/listado_de_productos.php';
                         <th><center>Codigo</center></th>
                         <th><center>Imagen</center></th>
                         <th><center>Nombre</center></th>
-                        <th><center>Descipcion</center></th>
+                        <th><center>Descripcion</center></th>
                         <th><center>Stock</center></th>
                         
                         <th><center>Precio compra</center></th>
                         <th><center>Precio venta</center></th>
                         <th><center>Fecha ingreso</center></th>
-                        <th><center>Usuario</center></th>
+                        
                         <th><center>Acciones</center></th>
                     </tr>
                   </thead>
@@ -93,17 +106,23 @@ include '../app/controllers/almacen/listado_de_productos.php';
                             <td><?php echo $productos_dato['precio_compra'] ?></td>
                             <td><?php echo $productos_dato['precio_venta'] ?></td>
                             <td><?php echo $productos_dato['fecha_ingreso'] ?></td>
-                            <td><?php echo $productos_dato['email'] ?></td>
+                            
                             <td>
                                 <center>
                               <div class="btn-group">
                                 <a href="show.php?id=<?php echo $id_producto; ?>" >
                                 <button  type="button" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Ver</button></a>
+
                                 <a href="update.php?id=<?php echo $id_producto; ?>">
+                                  <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
                                 <button type="button" class="btn btn-success btn-sm"><i class="fa fa-pencil-alt" ></i> Editar</button></a>
+                                <?php endif; ?>
+                                    
                                 <a href="delete.php?id=<?php echo $id_producto; ?>">
+                                  <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
                                 <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash" ></i> Borrar</button>
                                 </a>
+                                <?php endif; ?>
                                
                               </div>
                               </center>

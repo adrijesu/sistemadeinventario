@@ -1,8 +1,20 @@
 <?php 
- include "../app/config.php";
-include '../layout/sesion.php';
+include '../app/config.php';
+include '../app/seguridad.php';
+require_once('../app/permisos.php');
+require_once('../app/acciones.php');
+
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+
+$permisosCompras = [
+    'ADMINISTRADOR' => ['ver'],
+    'ALMACENERO'    => ['ver']
+];
+
+permitirAccion('ver', $permisosCompras);
 include '../layout/parte1.php';
 include '../app/controllers/compras/listado_de_compras.php';
+include '../app/seguridad.php';
 
 ?>
 
@@ -224,21 +236,11 @@ include '../app/controllers/compras/listado_de_compras.php';
                                                         <input type="text" value="<?php echo $compras_dato['telefono_proveedor']; ?>" class="form-control" disabled>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">empresa</label>
-                                                        <input type="text" value="<?php echo $compras_dato['empresa']; ?>" class="form-control" disabled>
-                                                    </div>
-                                                </div>
+                                                
                                                </div>
 
                                                <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">email del proveedor</label>
-                                                        <input type="text" value="<?php echo $compras_dato['email_proveedor']; ?>" class="form-control" disabled>
-                                                    </div>
-                                                </div>
+                                                
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label for="">direccion</label>
@@ -267,11 +269,17 @@ include '../app/controllers/compras/listado_de_compras.php';
                               <div class="btn-group">
                                 <a href="show.php?id=<?php echo $id_compra; ?>" >
                                 <button  type="button" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Ver</button></a>
+
+                                <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
                                 <a href="update.php?id=<?php echo $id_compra; ?>">
                                 <button type="button" class="btn btn-success btn-sm"><i class="fa fa-pencil-alt" ></i> Editar</button></a>
+                                  <?php endif; ?>
+
+                                  <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
                                 <a href="delete.php?id=<?php echo $id_compra; ?>">
                                 <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash" ></i> Borrar</button>
                                 </a>
+                                <?php endif; ?>
                                
                               </div>
                               </center>

@@ -6,7 +6,7 @@ $sql_compras = "SELECT *,pro.codigo as codigo, pro.nombre as nombre_producto, pr
                 pro.fecha_ingreso as fecha_ingreso, pro.imagen as imagen,
                 cat.nombre_categoria as nombre_categoria, us.nombres as nombre_usuario_producto,
                 prov.nombre_proveedor as nombre_proveedor, prov.celular as celular_proveedor, prov.telefono as telefono_proveedor,
-                prov.empresa as empresa, prov.email as email_proveedor, prov.direccion as direccion_proveedor, us.nombres as nombres_usuario
+                prov.direccion as direccion_proveedor, us.nombres as nombres_usuario
                 from tb_compras as co 
                 inner join tb_almacen as pro on co.id_producto = pro.id_producto 
                 inner join tb_categorias as cat on cat.id_categoria = pro.id_categoria

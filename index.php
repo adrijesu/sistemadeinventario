@@ -1,16 +1,30 @@
-<?php 
- include "app/config.php";
+<?php
+include 'app/config.php';
+include 'app/seguridad.php';
 include 'layout/sesion.php';
 include 'layout/parte1.php';
-include 'app/controllers/usuarios/listado_de_usuarios.php';
-include 'app/controllers/roles/listado_de_roles.php';
-include 'app/controllers/categorias/listado_de_categorias.php';
-include 'app/controllers/almacen/listado_de_productos.php';
-include 'app/controllers/proveedores/listado_de_proveedores.php';
-include 'app/controllers/compras/listado_de_compras.php';
-include 'app/controllers/ventas/listado_de_ventas.php';
-include 'app/controllers/clientes/listado_de_clientes.php';
 
+/* CONTROL DE ACCESO POR ROL */
+if ($_SESSION['rol'] === 'ADMINISTRADOR') {
+
+    include 'app/controllers/usuarios/listado_de_usuarios.php';
+    include 'app/controllers/roles/listado_de_roles.php';
+    include 'app/controllers/categorias/listado_de_categorias.php';
+    include 'app/controllers/almacen/listado_de_productos.php';
+    include 'app/controllers/proveedores/listado_de_proveedores.php';
+    include 'app/controllers/compras/listado_de_compras.php';
+    include 'app/controllers/ventas/listado_de_ventas.php';
+    include 'app/controllers/clientes/listado_de_clientes.php';
+
+} elseif ($_SESSION['rol'] === 'ALMACENERO') {
+
+    include 'app/controllers/almacen/listado_de_productos.php';
+    include 'app/controllers/compras/listado_de_compras.php';
+    include 'app/controllers/proveedores/listado_de_proveedores.php';
+    include 'app/controllers/categorias/listado_de_categorias.php';
+    include 'app/controllers/clientes/listado_de_clientes.php';
+    include 'app/controllers/ventas/listado_de_ventas.php';
+}
 ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -20,7 +34,7 @@ include 'app/controllers/clientes/listado_de_clientes.php';
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-12">
-            <h1 class="m-0">Bienvenido al SISTEMA de VENTAS - <?php echo $rol_sesion;?></h1>
+            <h1 class="m-0">Bienvenido al SISTEMA de INVENTARIO -  <?php echo $_SESSION['rol']; ?></h1>
           </div><!-- /.col -->
           
         </div><!-- /.row -->
@@ -36,32 +50,36 @@ include 'app/controllers/clientes/listado_de_clientes.php';
       <div class="row">
           
           
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <?php
-                $contador_de_usuario = 0; 
-                foreach($usuarios_datos as $usuarios_dato){
-                    $contador_de_usuario= $contador_de_usuario + 1;
-                }
-                ?>
-                <h3><?php echo $contador_de_usuario;?></h3>
+          <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-warning">
+                <div class="inner">
+                  <?php
+                  $contador_de_usuario = 0; 
+                  foreach($usuarios_datos as $usuarios_dato){
+                      $contador_de_usuario = $contador_de_usuario + 1;
+                  }
+                  ?>
+                  <h3><?php echo $contador_de_usuario;?></h3>
 
-                <p>Usuarios Registrados</p>
-              </div>
-              <a href="<?php echo $URL;?>/usuarios/create.php">
-                <div class="icon">
-                  <i class="fas fa-user-plus"></i>
+                  <p>Usuarios Registrados</p>
                 </div>
-              </a>
-              <a href="<?php echo $URL; ?>/usuarios" class="small-box-footer">Mas Informacion <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="<?php echo $URL;?>/usuarios/create.php">
+                  <div class="icon">
+                    <i class="fas fa-user-plus"></i>
+                  </div>
+                </a>
+                <a href="<?php echo $URL; ?>/usuarios" class="small-box-footer">
+                  Mas Informacion <i class="fas fa-arrow-circle-right"></i>
+                </a>
+              </div>
             </div>
-          </div>
+            <?php endif; ?>
 
 
-
+          <?php if ($_SESSION['rol'] === 'ADMINISTRADOR') : ?>
           <div class="col-lg-3 col-6">
             <!-- small box -->
             <div class="small-box bg-info">
@@ -84,6 +102,7 @@ include 'app/controllers/clientes/listado_de_clientes.php';
               <a href="<?php echo $URL; ?>/roles" class="small-box-footer">Mas Informacion <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
+          <?php endif; ?>
 
           <div class="col-lg-3 col-6">
             <!-- small box -->

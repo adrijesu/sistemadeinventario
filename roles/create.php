@@ -2,7 +2,7 @@
  include "../app/config.php";
 include '../layout/sesion.php';
 include '../layout/parte1.php';
-
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -12,7 +12,7 @@ include '../layout/parte1.php';
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-12">
-            <h1 class="m-0">REGISRO DE UN NUEVO ROL</h1>
+            <h1 class="m-0">REGISTRO DE UN NUEVO ROL</h1>
           </div><!-- /.col -->
           
         </div><!-- /.row -->

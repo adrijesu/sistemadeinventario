@@ -1,6 +1,18 @@
 <?php 
  include "../app/config.php";
 include '../layout/sesion.php';
+
+require_once('../app/permisos.php');
+require_once('../app/acciones.php');
+
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+
+$permisosAlmacen = [
+    'ADMINISTRADOR' => ['crear'],
+    'ALMACENERO'    => ['crear']
+];
+
+permitirAccion('crear', $permisosAlmacen);
 include '../layout/parte1.php';
 include '../app/controllers/almacen/listado_de_productos.php';
 include '../app/controllers/categorias/listado_de_categorias.php';
@@ -14,7 +26,7 @@ include '../app/controllers/categorias/listado_de_categorias.php';
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-12">
-            <h1 class="m-0">REGISRO DE UN NUEVO PRODUCTO</h1>
+            <h1 class="m-0">REGISTRO DE UN NUEVO PRODUCTO</h1>
           </div><!-- /.col -->
           
         </div><!-- /.row -->
@@ -31,6 +43,7 @@ include '../app/controllers/categorias/listado_de_categorias.php';
         <div class="card card-primary">
               <div class="card-header">
                 <h3 class="card-title">Usuraios Registrados</h3>
+                
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
@@ -107,8 +120,8 @@ include '../app/controllers/categorias/listado_de_categorias.php';
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="">usuario</label>
-                                            <input type="text" class="form-control"  value="<?php echo $email_sesion; ?>" disabled>
-                                            <input type="text" name="id_usuario" value="<?php echo $id_usuario_sesion;?>" hidden>
+                                            <input type="text" class="form-control"  value="<?php echo $_SESSION['sesion_email'] ?? ''; ?>" disabled>
+                                            
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -142,19 +155,27 @@ include '../app/controllers/categorias/listado_de_categorias.php';
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="">precio compra</label>
-                                            <input type="number" name="precio_compra" class="form-control" required>
+                                            <input type="number" step="any" name="precio_compra" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="">precio venta</label>
-                                            <input type="number" name="precio_venta" class="form-control" required>
+                                            <input type="number" step="any" name="precio_venta" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="">fecha ingreso</label>
-                                            <input type="date" name="fecha_ingreso" class="form-control" required>
+                                            <input 
+                                            type="date" 
+                                            name="fecha_ingreso"
+                                            class="form-control"
+                                            required
+                                            value="<?php echo date('Y-m-d'); ?>"
+                                            max="<?php echo date('Y-m-d'); ?>"
+                                                >
+
                                         </div>
                                     </div>
                                 </div>

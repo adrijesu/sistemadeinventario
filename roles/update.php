@@ -3,6 +3,7 @@
 include '../layout/sesion.php';
 include '../layout/parte1.php';
 include '../app/controllers/roles/update_roles.php';
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->

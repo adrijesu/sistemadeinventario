@@ -4,10 +4,17 @@ $nro_venta_get = $_GET['nro_venta'];
 
 include "../app/config.php";
 include '../layout/sesion.php';
+permitirRoles(['ADMINISTRADOR']);
+
+$permisosVentas = [
+    'ADMINISTRADOR' => ['eliminar']
+];
+
+permitirAccion('eliminar', $permisosVentas);
 include '../layout/parte1.php';
 include '../app/controllers/ventas/cargar_venta.php';
 include '../app/controllers/clientes/cargar_cliente.php';
-
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->

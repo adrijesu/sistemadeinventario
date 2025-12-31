@@ -1,10 +1,22 @@
 <?php 
  include "../app/config.php";
 include '../layout/sesion.php';
+require_once('../app/permisos.php');
+require_once('../app/acciones.php');
+
+permitirRoles(['ADMINISTRADOR','ALMACENERO']);
+
+$permisosCompras = [
+    'ADMINISTRADOR' => ['crear'],
+    'ALMACENERO'    => ['crear']
+];
+
+permitirAccion('crear', $permisosCompras);
 include '../layout/parte1.php';
 include '../app/controllers/almacen/listado_de_productos.php';
 include '../app/controllers/proveedores/listado_de_proveedores.php';
 include '../app/controllers/compras/listado_de_compras.php';
+include '../app/seguridad.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -14,7 +26,7 @@ include '../app/controllers/compras/listado_de_compras.php';
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-12">
-            <h1 class="m-0">REGISRO DE UN NUEVA COMPRA</h1>
+            <h1 class="m-0">REGISTRO DE UN NUEVA COMPRA</h1>
           </div><!-- /.col -->
           
         </div><!-- /.row -->
@@ -72,7 +84,7 @@ include '../app/controllers/compras/listado_de_compras.php';
                                                             <th><center>Codigo</center></th>
                                                             <th><center>Imagen</center></th>
                                                             <th><center>Nombre</center></th>
-                                                            <th><center>Descipcion</center></th>
+                                                            <th><center>Descripcion</center></th>
                                                             <th><center>Stock</center></th>
                                                             
                                                             <th><center>Precio compra</center></th>
@@ -112,7 +124,7 @@ include '../app/controllers/compras/listado_de_compras.php';
                                                                             var email = "<?php echo $productos_dato['email']; ?>";
                                                                             $('#usuario_producto').val(email);
 
-                                                                            var descripcion = "<?php echo $productos_dato['descripcion']; ?>";
+                                                                            var descripcion = <?php echo json_encode($productos_dato['descripcion']); ?>;
                                                                             $('#descripcion_producto').val(descripcion);
 
                                                                             var stock = "<?php echo $productos_dato['stock']; ?>";
@@ -258,7 +270,14 @@ include '../app/controllers/compras/listado_de_compras.php';
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="">fecha ingreso</label>
-                                                    <input type="date" name="fecha_ingreso" id="fecha_ingreso" class="form-control" disabled>
+                                                    <input 
+                                            type="date" 
+                                            name="fecha_ingreso"
+                                            class="form-control"
+                                            required
+                                            value="<?php echo date('Y-m-d'); ?>"
+                                            max="<?php echo date('Y-m-d'); ?>"
+                                                >
                                                 </div>
                                             </div>
                                         </div>
@@ -304,8 +323,7 @@ include '../app/controllers/compras/listado_de_compras.php';
                                                             <th><center>Nombre del proveedor</center></th>
                                                             <th><center>Celular</center></th>
                                                             <th><center>Telefono</center></th>
-                                                            <th><center>Empresa</center></th>
-                                                            <th><center>Email</center></th>
+                                                            
                                                             <th><center>Direccion</center></th>
                                                             
                                                         </tr>
@@ -337,13 +355,7 @@ include '../app/controllers/compras/listado_de_compras.php';
 
                                                                             var telefono_proveedor = '<?php echo $proveedores_dato['telefono']; ?>';
                                                                             $('#telefono').val(telefono_proveedor);
-
-                                                                            var empresa_proveedor = '<?php echo $proveedores_dato['empresa']; ?>';
-                                                                            $('#empresa').val(empresa_proveedor);
-
-                                                                            var email_proveedor = '<?php echo $proveedores_dato['email']; ?>';
-                                                                            $('#email').val(email_proveedor);
-
+                                                                            
                                                                             var direccion_proveedor = '<?php echo $proveedores_dato['direccion']; ?>';
                                                                             $('#direccion').val(direccion_proveedor);
 
@@ -359,8 +371,7 @@ include '../app/controllers/compras/listado_de_compras.php';
                                                                 </a>
                                                                 </td>
                                                                 <td><?php echo $proveedores_dato['telefono'];?></td>
-                                                                <td><?php echo $proveedores_dato['empresa'];?></td>
-                                                                <td><?php echo $proveedores_dato['email'];?></td>
+                                                                
                                                                 <td><?php echo $proveedores_dato['direccion'];?></td>
                                                                 
                                                             
@@ -411,20 +422,7 @@ include '../app/controllers/compras/listado_de_compras.php';
 
             <div class="row">
                 
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="">empresa</label>
-                        <input type="text" id="empresa" class="form-control" disabled >
-                        
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="">email</label>
-                        <input type="email" id="email" class="form-control" disabled>
-                       
-                    </div>
-                </div>
+                
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="">direccion</label>
@@ -478,7 +476,15 @@ include '../app/controllers/compras/listado_de_compras.php';
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="">fecha de la compra</label>
-                            <input type="date" name="" id="fecha_compra" class="form-control">
+                            <input 
+                            type="date" 
+                            name="fecha_compra"
+                            id="fecha_compra"
+                            class="form-control"
+                            required
+                            value="<?php echo date('Y-m-d'); ?>"
+                            max="<?php echo date('Y-m-d'); ?>"
+                        >
                         </div>
                     </div>
 
@@ -512,21 +518,33 @@ include '../app/controllers/compras/listado_de_compras.php';
 
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="">cantidad de la compra</label>
-                            <input type="number" name="" id="cantidad_compra" style=" text-align: center" class="form-control">
-                        </div>
+                                <label for="">cantidad de la compra</label>
+                                <input 
+                                    type="number" 
+                                    id="cantidad_compra"
+                                    class="form-control"
+                                    style="text-align: center"
+                                    min="1"
+                                    step="1"
+                                    required
+                                >
+                            </div>
                         <script>
-                            $('#cantidad_compra').keyup(function () {
-                                //alert("estamos presionan el input");//
-                                var stock_actual = $('#stock_actual').val();
-                                var stock_compra = $('#cantidad_compra').val();
+                            $('#cantidad_compra').on('input', function () {
+                                var stock_actual = parseInt($('#stock_actual').val()) || 0;
+                                var stock_compra = parseInt($(this).val()) || 0;
 
-                                var total = parseInt(stock_actual) + parseInt(stock_compra);
-                                //alert(total);
+                                if (stock_compra < 0) {
+                                    alert('La cantidad no puede ser negativa');
+                                    $(this).val('');
+                                    $('#stock_total').val('');
+                                    return;
+                                }
+
+                                var total = stock_actual + stock_compra;
                                 $('#stock_total').val(total);
-
-                            })
-                        </script>
+                            });
+                            </script>
                     </div>
 
                     <div class="col-md-12">
@@ -575,7 +593,10 @@ include '../app/controllers/compras/listado_de_compras.php';
                            }else if(cantidad_compra == ""){
                                 $('#cantidad_compra').focus();
                                 alert("Debe llenar todos los campos");
-                           }
+                           }else if (cantidad_compra <= 0) {
+                                    $('#cantidad_compra').focus();
+                                    alert("La cantidad debe ser mayor a cero");
+}
                            else{
                             //alert("listo para el controlador");
                             var url="../app/controllers/compras/create.php";
